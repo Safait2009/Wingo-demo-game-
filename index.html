@@ -3,200 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DK WIN - Professional Wingo</title>
+    <title>Wingo Live - Safait</title>
     <style>
-        :root { --primary-gold: #ffeb3b; --bg-dark: #1a1a1a; --card-bg: #262626; --green: #4caf50; --red: #f44336; --violet: #9c27b0; }
-        body { background-color: var(--bg-dark); color: white; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding-bottom: 70px; }
+        :root { --gold: #ffeb3b; --green: #4caf50; --red: #f44336; }
+        body { background: #1a1a1a; color: white; font-family: Arial; text-align: center; margin: 0; padding-bottom: 50px; }
+        .header { background: linear-gradient(180deg, #2e7d32, #1b5e20); padding: 20px; border-radius: 0 0 20px 20px; }
+        .balance { font-size: 32px; font-weight: bold; margin: 10px 0; }
+        .game-card { background: #262626; margin: 15px; padding: 15px; border-radius: 12px; border: 1px solid #444; }
+        .timer-val { font-size: 28px; font-weight: bold; color: var(--gold); }
         
-        /* Header & Balance */
-        .top-header { background: linear-gradient(180deg, #2e7d32, #1b5e20); padding: 20px; text-align: center; border-radius: 0 0 20px 20px; }
-        .balance-label { font-size: 14px; opacity: 0.9; }
-        .balance-amt { font-size: 30px; font-weight: bold; margin: 5px 0; }
-        .btn-row { display: flex; justify-content: center; gap: 15px; margin-top: 10px; }
-        .btn-head { padding: 8px 25px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; }
-
-        /* Game Section */
-        .game-card { background: var(--card-bg); margin: 10px; padding: 15px; border-radius: 12px; border: 1px solid #333; }
-        .timer-info { display: flex; justify-content: space-between; border-bottom: 1px solid #444; padding-bottom: 10px; margin-bottom: 15px; }
-        .time-rem { font-size: 24px; font-weight: bold; color: var(--primary-gold); }
-
-        /* Betting Controls */
-        .color-row, .size-row { display: flex; justify-content: space-around; margin-bottom: 15px; }
-        .btn-opt { flex: 1; margin: 0 5px; padding: 12px; border: none; border-radius: 5px; color: white; font-weight: bold; cursor: pointer; }
-        .btn-green { background: var(--green); } .btn-violet { background: var(--violet); } .btn-red { background: var(--red); }
-        .btn-big { background: #e67e22; } .btn-small { background: #3498db; }
-
-        .num-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; padding: 5px; }
-        .n-btn { background: #333; border: 1px solid #555; color: white; padding: 15px; border-radius: 50%; font-weight: bold; cursor: pointer; }
-
-        /* Multiplier Bar */
-        .multiplier-bar { display: flex; justify-content: space-between; padding: 10px; overflow-x: auto; gap: 5px; }
-        .m-btn { background: #444; border: none; color: #bbb; padding: 5px 12px; border-radius: 4px; font-size: 12px; }
-        .m-active { background: var(--green); color: white; }
-
-        /* Tabs System */
-        .tab-bar { display: flex; background: #222; margin-top: 20px; }
-        .tab-btn { flex: 1; padding: 12px; color: #888; border: none; background: none; font-weight: bold; cursor: pointer; }
-        .tab-active { color: var(--primary-gold); border-bottom: 3px solid var(--primary-gold); }
-        .tab-content { display: none; padding: 10px; }
-        .show { display: block; }
-
-        /* Table Style */
-        table { width: 100%; font-size: 13px; text-align: center; border-collapse: collapse; }
-        th { color: #888; padding: 10px; border-bottom: 1px solid #333; }
-        td { padding: 12px; border-bottom: 1px solid #222; }
-        .status-win { color: var(--green); font-weight: bold; }
-        .status-loss { color: var(--red); font-weight: bold; }
-
-        /* Footer */
-        .footer { position: fixed; bottom: 0; width: 100%; background: #222; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #333; }
-        .f-item { font-size: 12px; color: #777; }
+        .tab-section { background: #222; margin: 15px; padding: 10px; border-radius: 10px; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th { color: #888; border-bottom: 1px solid #333; padding: 10px; }
+        td { padding: 10px; border-bottom: 1px solid #1a1a1a; }
+        
+        .result-circle { width: 25px; height: 25px; line-height: 25px; border-radius: 50%; display: inline-block; font-weight: bold; font-size: 12px; color: white; }
+        .bg-green { background: var(--green); }
+        .bg-red { background: var(--red); }
+        .bg-violet { background: #9c27b0; }
     </style>
 </head>
-<body>
+<body onload="initGame()">
 
-    <div class="top-header">
-        <div class="balance-label">Wallet balance</div>
-        <div class="balance-amt">৳ <span id="balance">1000.00</span></div>
-        <div class="btn-row">
-            <button class="btn-head" style="background:var(--red); color:white;">Withdraw</button>
-            <button class="btn-head" style="background:var(--green); color:white;" onclick="deposit()">Deposit</button>
-        </div>
+    <div class="header">
+        <div style="font-size: 14px; opacity: 0.8;">Wallet Balance</div>
+        <div class="balance">৳ <span id="balance">1000.00</span></div>
+        <button onclick="deposit()" style="background: var(--gold); border: none; padding: 10px 25px; border-radius: 20px; font-weight: bold; cursor: pointer;">Deposit</button>
     </div>
 
     <div class="game-card">
-        <div class="timer-info">
-            <div style="text-align:left;">Period<br><b id="period-id">202601051463</b></div>
-            <div style="text-align:right;">Time remaining<br><span id="timer" class="time-rem">00:30</span></div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="text-align:left;">Period<br><b id="period">20260105001</b></div>
+            <div style="text-align:right;">Time Left<br><span id="timer" class="timer-val">00:30</span></div>
         </div>
-
-        <div class="color-row">
-            <button class="btn-opt btn-green" onclick="bet('Green')">Green</button>
-            <button class="btn-opt btn-violet" onclick="bet('Violet')">Violet</button>
-            <button class="btn-opt btn-red" onclick="bet('Red')">Red</button>
-        </div>
-
-        <div class="num-grid" id="numGrid"></div>
-
-        <div class="multiplier-bar">
-            <button class="m-btn m-active">X1</button><button class="m-btn">X5</button>
-            <button class="m-btn">X10</button><button class="m-btn">X20</button>
-            <button class="m-btn">X50</button><button class="m-btn">X100</button>
-        </div>
-
-        <div class="size-row">
-            <button class="btn-opt btn-big" onclick="bet('Big')">Big</button>
-            <button class="btn-opt btn-small" onclick="bet('Small')">Small</button>
-        </div>
+        
+        <p style="color: #888; font-size: 12px;">Bet on Color, Size or Number</p>
+        <button onclick="placeBet('Big')" style="padding:10px 40px; background:#e67e22; border:none; color:white; border-radius:5px; font-weight:bold; cursor:pointer;">Big</button>
+        <button onclick="placeBet('Small')" style="padding:10px 40px; background:#3498db; border:none; color:white; border-radius:5px; font-weight:bold; cursor:pointer;">Small</button>
     </div>
 
-    <div class="tab-bar">
-        <button class="tab-btn tab-active" onclick="switchTab('game-hist', this)">Game history</button>
-        <button class="tab-btn" onclick="switchTab('chart-hist', this)">Chart</button>
-        <button class="tab-btn" onclick="switchTab('my-hist', this)">My history</button>
-    </div>
-
-    <div id="game-hist" class="tab-content show">
+    <div class="tab-section">
+        <h3 style="margin: 0; color: var(--gold); font-size: 16px;">Game History (Previous Rounds)</h3>
         <table>
-            <thead><tr><th>Period</th><th>Number</th><th>Big Small</th><th>Color</th></tr></thead>
-            <tbody id="marketBody"></tbody>
+            <thead>
+                <tr>
+                    <th>Period</th>
+                    <th>Number</th>
+                    <th>Size</th>
+                    <th>Color</th>
+                </tr>
+            </thead>
+            <tbody id="marketHistory">
+                </tbody>
         </table>
-    </div>
-
-    <div id="my-hist" class="tab-content">
-        <table>
-            <thead><tr><th>Period</th><th>Amount</th><th>Status</th></tr></thead>
-            <tbody id="userBody"></tbody>
-        </table>
-    </div>
-
-    <div class="footer">
-        <div class="f-item" style="color:var(--green)">Home</div>
-        <div class="f-item">Activity</div>
-        <div class="f-item">Promotion</div>
-        <div class="f-item">Account</div>
     </div>
 
     <script>
         let balance = 1000.00;
         let timeLeft = 30;
-        let period = 202601051463;
-        let userBets = [];
+        let currentPeriod = 20260105150; // একটা বড় নম্বর থেকে শুরু
         let gameResults = [];
 
-        // Num Grid
-        const grid = document.getElementById('numGrid');
-        for(let i=0; i<=9; i++) grid.innerHTML += `<button class="n-btn" onclick="bet(${i})">${i}</button>`;
-
-        function switchTab(id, btn) {
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('show'));
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('tab-active'));
-            document.getElementById(id).classList.add('show');
-            btn.classList.add('tab-active');
+        function initGame() {
+            // ১. গেমে ঢোকা মাত্রই ১০টি ডেমো রেজাল্ট তৈরি করবে
+            for(let i=10; i>0; i--) {
+                generateFakeResult(currentPeriod - i);
+            }
+            renderMarket();
+            startTimer();
         }
 
-        function bet(type) {
-            if(timeLeft <= 5) return alert("Betting closed!");
-            let amt = prompt(`Bet on ${type}. Enter Amount:`, "10");
-            if(amt && amt <= balance) {
-                balance -= parseFloat(amt);
-                userBets.push({ p: period, t: type, a: amt, s: 'Pending' });
-                updateUI();
-                alert("Bet Successful!");
-            }
+        function generateFakeResult(pId) {
+            let num = Math.floor(Math.random() * 10);
+            let size = num >= 5 ? "Big" : "Small";
+            let colorClass = (num % 2 === 0) ? "bg-red" : "bg-green";
+            if(num === 0 || num === 5) colorClass = "bg-violet";
+
+            gameResults.unshift({ p: pId, n: num, s: size, c: colorClass });
+        }
+
+        function renderMarket() {
+            let html = "";
+            gameResults.slice(0, 10).forEach(res => {
+                html += `<tr>
+                    <td>${res.p}</td>
+                    <td><span class="result-circle ${res.c}">${res.n}</span></td>
+                    <td>${res.s}</td>
+                    <td>${res.c.replace('bg-', '')}</td>
+                </tr>`;
+            });
+            document.getElementById('marketHistory').innerHTML = html;
+        }
+
+        function startTimer() {
+            setInterval(() => {
+                if (timeLeft <= 0) {
+                    // নতুন রেজাল্ট যোগ করা
+                    generateFakeResult(currentPeriod);
+                    currentPeriod++;
+                    document.getElementById('period').innerText = currentPeriod;
+                    timeLeft = 30;
+                    renderMarket();
+                }
+                let s = timeLeft < 10 ? "0" + timeLeft : timeLeft;
+                document.getElementById('timer').innerText = "00:" + s;
+                timeLeft--;
+            }, 1000);
         }
 
         function deposit() {
-            let a = prompt("Deposit amount:", "500");
-            if(a) { balance += parseFloat(a); updateUI(); }
+            let amt = prompt("Amount:", "1000");
+            if(amt) { balance += parseFloat(amt); document.getElementById('balance').innerText = balance.toFixed(2); }
         }
 
-        function updateUI() { document.getElementById('balance').innerText = balance.toFixed(2); }
-
-        setInterval(() => {
-            if(timeLeft <= 0) {
-                let winNum = Math.floor(Math.random() * 10);
-                let size = winNum >= 5 ? "Big" : "Small";
-                let color = (winNum % 2 === 0) ? "Red" : "Green";
-                if(winNum === 0 || winNum === 5) color = "Violet";
-
-                gameResults.unshift({ p: period, n: winNum, s: size, c: color });
-                processBets(winNum, size, color);
-                
-                period++;
-                document.getElementById('period-id').innerText = period;
-                timeLeft = 30;
-                renderTables();
-            }
-            let s = timeLeft < 10 ? "0"+timeLeft : timeLeft;
-            document.getElementById('timer').innerText = "00:" + s;
-            timeLeft--;
-        }, 1000);
-
-        function processBets(n, s, c) {
-            userBets.forEach(b => {
-                if(b.p === period && b.s === 'Pending') {
-                    let win = (b.t === n || b.t === s || b.t === c);
-                    if(win) { b.s = 'Succeed'; balance += (b.a * 1.9); }
-                    else { b.s = 'Failed'; }
-                }
-            });
-            updateUI();
-        }
-
-        function renderTables() {
-            let gHtml = "";
-            gameResults.slice(0, 10).forEach(r => {
-                gHtml += `<tr><td>${r.p}</td><td style="color:var(--primary-gold)">${r.n}</td><td>${r.s}</td><td>${r.c}</td></tr>`;
-            });
-            document.getElementById('marketBody').innerHTML = gHtml;
-
-            let uHtml = "";
-            userBets.slice().reverse().forEach(b => {
-                let cls = b.s === 'Succeed' ? 'status-win' : 'status-loss';
-                uHtml += `<tr><td>${b.p}</td><td>৳${b.a}</td><td class="${cls}">${b.s}</td></tr>`;
-            });
-            document.getElementById('userBody').innerHTML = uHtml;
+        function placeBet(type) {
+            alert(type + " বেট সিস্টেম কাজ করছে! ব্যালেন্স থেকে টাকা কাটবে।");
         }
     </script>
 </body>
