@@ -3,152 +3,172 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wingo 30s - Professional Demo</title>
+    <title>Wingo Premium - Custom Bet</title>
     <style>
-        body { background-color: #1a1a1a; color: white; font-family: 'Arial', sans-serif; margin: 0; text-align: center; }
-        
-        /* Header section as per screenshot */
-        .header { background: #2e7d32; padding: 25px; border-radius: 0 0 25px 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-        .balance-label { font-size: 14px; opacity: 0.8; }
-        .balance-amount { font-size: 32px; font-weight: bold; color: #fff; margin-top: 5px; }
+        body { background-color: #1a1a1a; color: white; font-family: Arial; margin: 0; text-align: center; }
+        .header { background: #2e7d32; padding: 20px; border-radius: 0 0 20px 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        .balance-amount { font-size: 35px; font-weight: bold; margin: 5px 0; color: #fff; }
+        .btn-deposit { background: #ffeb3b; color: #000; border: none; padding: 10px 30px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 16px; }
 
-        /* Game Box */
-        .game-container { padding: 15px; }
-        .timer-box { 
-            background: #262626; 
-            padding: 15px; 
-            border-radius: 12px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
-            border: 1px solid #444;
-            margin-bottom: 20px;
-        }
-        .timer-val { font-size: 28px; font-weight: bold; color: #4caf50; }
-        .timer-urgent { color: #f44336; } /* 5 sec thakte red hobe */
-
-        /* Result Display */
-        .result-circle { 
-            width: 120px; height: 120px; line-height: 120px; 
-            border-radius: 50%; background: #333; 
-            margin: 20px auto; font-size: 60px; font-weight: bold;
-            border: 6px solid #4caf50; color: #ffeb3b;
-            text-shadow: 0 0 15px rgba(255, 235, 59, 0.6);
-        }
+        .game-card { background: #262626; margin: 15px; padding: 15px; border-radius: 15px; border: 1px solid #444; }
+        .timer-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .timer-val { font-size: 26px; font-weight: bold; color: #4caf50; }
 
         /* Betting Buttons */
-        .color-btns { display: flex; justify-content: space-around; margin: 20px 0; }
-        .btn { padding: 12px 30px; border: none; border-radius: 8px; font-weight: bold; color: white; cursor: pointer; font-size: 16px; }
+        .bet-options { display: flex; justify-content: space-around; margin: 10px 0; }
+        .btn-bet { padding: 12px; border: none; border-radius: 5px; font-weight: bold; color: white; cursor: pointer; width: 30%; }
+        .big { background: #f1c40f; color: black; width: 45%; } .small { background: #3498db; width: 45%; }
         .green { background: #4caf50; } .violet { background: #9c27b0; } .red { background: #f44336; }
-        .disabled { background: #555 !important; cursor: not-allowed; opacity: 0.6; }
 
-        .num-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; padding: 10px; }
-        .num-btn { background: #333; border: 1px solid #555; color: white; padding: 18px; border-radius: 50%; font-weight: bold; cursor: pointer; font-size: 18px; }
-        
-        .footer-nav { position: fixed; bottom: 0; width: 100%; background: #262626; display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid #333; }
-        .nav-item { font-size: 12px; color: #888; }
+        .num-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; padding: 10px; }
+        .num-btn { background: #333; border: 1px solid #555; color: white; padding: 15px; border-radius: 50%; cursor: pointer; font-weight: bold; }
+
+        /* Custom Bet Popup */
+        #betPopup { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #333; padding: 20px; border-radius: 15px; border: 2px solid #4caf50; width: 80%; max-width: 300px; z-index: 100; }
+        #betPopup input { width: 90%; padding: 10px; margin: 15px 0; border-radius: 5px; border: none; font-size: 18px; text-align: center; }
+
+        .history-section { margin: 15px; background: #262626; border-radius: 10px; padding: 15px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th { color: #888; border-bottom: 1px solid #444; padding: 10px; }
+        td { padding: 10px; border-bottom: 1px solid #333; }
+        .win-text { color: #4caf50; font-weight: bold; } .loss-text { color: #f44336; }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <div class="balance-label">Available balance</div>
-        <div class="balance-amount">৳ 1,000.00</div>
+        <div>Available Balance</div>
+        <div class="balance-amount">৳ <span id="balance">1000.00</span></div>
+        <button class="btn-deposit" onclick="addMoney()">Deposit</button>
     </div>
 
-    <div class="game-container">
-        <div class="timer-box">
-            <div style="text-align: left;">
-                <div style="font-size: 12px; color: #aaa;">Period</div>
-                <div id="period-id" style="font-weight: bold;">20260105001</div>
-            </div>
-            <div style="text-align: right;">
-                <div style="font-size: 12px; color: #aaa;">Time Left</div>
-                <div id="timer" class="timer-val">00:30</div>
-            </div>
+    <div class="game-card">
+        <div class="timer-row">
+            <div style="text-align: left;">Period<br><b>20260105<span id="period">001</span></b></div>
+            <div style="text-align: right;">Time Left<br><span id="timer" class="timer-val">00:30</span></div>
         </div>
 
-        <div class="result-circle" id="result">?</div>
-
-        <p id="bet-status" style="color: #4caf50; font-weight: bold;">Betting Open</p>
-
-        <div class="color-btns">
-            <button class="btn green bet-btn">Green</button>
-            <button class="btn violet bet-btn">Violet</button>
-            <button class="btn red bet-btn">Red</button>
+        <div class="bet-options">
+            <button class="btn-bet green" onclick="openBetPopup('Green')">Green</button>
+            <button class="btn-bet violet" onclick="openBetPopup('Violet')">Violet</button>
+            <button class="btn-bet red" onclick="openBetPopup('Red')">Red</button>
+        </div>
+        
+        <div class="bet-options">
+            <button class="btn-bet big" onclick="openBetPopup('Big')">Big</button>
+            <button class="btn-bet small" onclick="openBetPopup('Small')">Small</button>
         </div>
 
         <div class="num-grid">
-            <button class="num-btn bet-btn">0</button>
-            <button class="num-btn bet-btn">1</button>
-            <button class="num-btn bet-btn">2</button>
-            <button class="num-btn bet-btn">3</button>
-            <button class="num-btn bet-btn">4</button>
-            <button class="num-btn bet-btn">5</button>
-            <button class="num-btn bet-btn">6</button>
-            <button class="num-btn bet-btn">7</button>
-            <button class="num-btn bet-btn">8</button>
-            <button class="num-btn bet-btn">9</button>
+            <script>
+                for(let i=0; i<=9; i++) {
+                    document.write(`<button class="num-btn" onclick="openBetPopup(${i})">${i}</button>`);
+                }
+            </script>
         </div>
     </div>
 
-    <div class="footer-nav">
-        <div class="nav-item">Home</div>
-        <div class="nav-item" style="color: #4caf50;">Wingo</div>
-        <div class="nav-item">Account</div>
+    <div id="betPopup">
+        <h3 id="bettingOn" style="margin:0; color:#4caf50;">Bet on: Green</h3>
+        <p style="font-size: 12px;">Enter Amount to Bet:</p>
+        <input type="number" id="customAmount" value="100" min="1">
+        <div style="display:flex; justify-content: space-between;">
+            <button class="btn-bet red" style="width:45%" onclick="closePopup()">Cancel</button>
+            <button class="btn-bet green" style="width:45%" onclick="confirmBet()">Confirm</button>
+        </div>
+    </div>
+
+    <div class="history-section">
+        <h3>Game History</h3>
+        <table>
+            <thead><tr><th>Period</th><th>Num</th><th>Size</th><th>Res</th></tr></thead>
+            <tbody id="historyBody"></tbody>
+        </table>
     </div>
 
     <script>
+        let balance = 1000.00;
         let timeLeft = 30;
-        let period = 20260105001;
-        const timerEl = document.getElementById('timer');
-        const betStatusEl = document.getElementById('bet-status');
-        const betBtns = document.querySelectorAll('.bet-btn');
+        let period = 1;
+        let currentBetType = null;
+        let activeBet = null;
 
-        function startTimer() {
-            setInterval(() => {
-                if (timeLeft <= 0) {
-                    // Result Generation
-                    let finalRes = Math.floor(Math.random() * 10);
-                    document.getElementById('result').innerText = finalRes;
-                    
-                    // Reset Game
-                    timeLeft = 30;
-                    period++;
-                    document.getElementById('period-id').innerText = period;
-                    enableBetting();
-                }
-
-                // UI Updates
-                let sec = timeLeft < 10 ? "0" + timeLeft : timeLeft;
-                timerEl.innerText = "00:" + sec;
-
-                // Last 5 seconds logic
-                if (timeLeft <= 5) {
-                    timerEl.classList.add('timer-urgent');
-                    disableBetting();
-                } else {
-                    timerEl.classList.remove('timer-urgent');
-                }
-
-                timeLeft--;
-            }, 1000);
+        function addMoney() {
+            let amount = prompt("Enter amount to add (Demo):", "500");
+            if (amount) { balance += parseFloat(amount); updateBalance(); }
         }
 
-        function disableBetting() {
-            betStatusEl.innerText = "Betting Closed!";
-            betStatusEl.style.color = "#f44336";
-            betBtns.forEach(btn => btn.classList.add('disabled'));
+        function openBetPopup(type) {
+            if (timeLeft <= 5) return alert("Time up! Wait for next round.");
+            currentBetType = type;
+            document.getElementById('bettingOn').innerText = "Bet on: " + type;
+            document.getElementById('betPopup').style.display = 'block';
         }
 
-        function enableBetting() {
-            betStatusEl.innerText = "Betting Open";
-            betStatusEl.style.color = "#4caf50";
-            betBtns.forEach(btn => btn.classList.remove('disabled'));
+        function closePopup() { document.getElementById('betPopup').style.display = 'none'; }
+
+        function confirmBet() {
+            let amount = parseFloat(document.getElementById('customAmount').value);
+            if (amount > 0 && amount <= balance) {
+                balance -= amount;
+                activeBet = { type: currentBetType, amount: amount };
+                updateBalance();
+                closePopup();
+                alert("Bet Placed: ৳" + amount + " on " + currentBetType);
+            } else {
+                alert("Insufficient balance or invalid amount!");
+            }
         }
 
-        // Start the game
-        startTimer();
+        function updateBalance() { document.getElementById('balance').innerText = balance.toFixed(2); }
+
+        setInterval(() => {
+            if (timeLeft <= 0) {
+                let winNum = Math.floor(Math.random() * 10);
+                let size = (winNum >= 5) ? "Big" : "Small";
+                calculateResult(winNum, size);
+                addHistory(period, winNum, size);
+                
+                period++;
+                document.getElementById('period').innerText = period.toString().padStart(3, '0');
+                timeLeft = 30;
+                activeBet = null;
+            }
+            
+            let sec = timeLeft < 10 ? "0" + timeLeft : timeLeft;
+            document.getElementById('timer').innerText = "00:" + sec;
+            if(timeLeft <= 5) { 
+                document.getElementById('timer').style.color = "#f44336"; 
+                closePopup();
+            } else { 
+                document.getElementById('timer').style.color = "#4caf50"; 
+            }
+            timeLeft--;
+        }, 1000);
+
+        function calculateResult(n, s) {
+            if (!activeBet) return;
+            let win = false;
+            if (activeBet.type === n || activeBet.type === s) win = true;
+            // Color Logic
+            if (activeBet.type === "Green" && [1,3,7,9].includes(n)) win = true;
+            if (activeBet.type === "Red" && [2,4,6,8].includes(n)) win = true;
+            if (activeBet.type === "Violet" && [0,5].includes(n)) win = true;
+
+            if (win) {
+                let prize = activeBet.amount * 2;
+                balance += prize;
+                alert("WIN! You got ৳" + prize);
+            } else {
+                alert("LOSS! Better luck next time.");
+            }
+            updateBalance();
+        }
+
+        function addHistory(p, n, s) {
+            let row = `<tr><td>${p}</td><td style="color:#f1c40f">${n}</td><td>${s}</td><td class="win-text">Success</td></tr>`;
+            document.getElementById('historyBody').innerHTML = row + document.getElementById('historyBody').innerHTML;
+        }
     </script>
 </body>
 </html>
