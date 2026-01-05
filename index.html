@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wingo 30s - Professional Demo</title>
+    <style>
+        body { background-color: #1a1a1a; color: white; font-family: 'Arial', sans-serif; margin: 0; text-align: center; }
+        
+        /* Header section as per screenshot */
+        .header { background: #2e7d32; padding: 25px; border-radius: 0 0 25px 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .balance-label { font-size: 14px; opacity: 0.8; }
+        .balance-amount { font-size: 32px; font-weight: bold; color: #fff; margin-top: 5px; }
+
+        /* Game Box */
+        .game-container { padding: 15px; }
+        .timer-box { 
+            background: #262626; 
+            padding: 15px; 
+            border-radius: 12px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            border: 1px solid #444;
+            margin-bottom: 20px;
+        }
+        .timer-val { font-size: 28px; font-weight: bold; color: #4caf50; }
+        .timer-urgent { color: #f44336; } /* 5 sec thakte red hobe */
+
+        /* Result Display */
+        .result-circle { 
+            width: 120px; height: 120px; line-height: 120px; 
+            border-radius: 50%; background: #333; 
+            margin: 20px auto; font-size: 60px; font-weight: bold;
+            border: 6px solid #4caf50; color: #ffeb3b;
+            text-shadow: 0 0 15px rgba(255, 235, 59, 0.6);
+        }
+
+        /* Betting Buttons */
+        .color-btns { display: flex; justify-content: space-around; margin: 20px 0; }
+        .btn { padding: 12px 30px; border: none; border-radius: 8px; font-weight: bold; color: white; cursor: pointer; font-size: 16px; }
+        .green { background: #4caf50; } .violet { background: #9c27b0; } .red { background: #f44336; }
+        .disabled { background: #555 !important; cursor: not-allowed; opacity: 0.6; }
+
+        .num-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; padding: 10px; }
+        .num-btn { background: #333; border: 1px solid #555; color: white; padding: 18px; border-radius: 50%; font-weight: bold; cursor: pointer; font-size: 18px; }
+        
+        .footer-nav { position: fixed; bottom: 0; width: 100%; background: #262626; display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid #333; }
+        .nav-item { font-size: 12px; color: #888; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="balance-label">Available balance</div>
+        <div class="balance-amount">৳ 1,000.00</div>
+    </div>
+
+    <div class="game-container">
+        <div class="timer-box">
+            <div style="text-align: left;">
+                <div style="font-size: 12px; color: #aaa;">Period</div>
+                <div id="period-id" style="font-weight: bold;">20260105001</div>
+            </div>
+            <div style="text-align: right;">
+                <div style="font-size: 12px; color: #aaa;">Time Left</div>
+                <div id="timer" class="timer-val">00:30</div>
+            </div>
+        </div>
+
+        <div class="result-circle" id="result">?</div>
+
+        <p id="bet-status" style="color: #4caf50; font-weight: bold;">Betting Open</p>
+
+        <div class="color-btns">
+            <button class="btn green bet-btn">Green</button>
+            <button class="btn violet bet-btn">Violet</button>
+            <button class="btn red bet-btn">Red</button>
+        </div>
+
+        <div class="num-grid">
+            <button class="num-btn bet-btn">0</button>
+            <button class="num-btn bet-btn">1</button>
+            <button class="num-btn bet-btn">2</button>
+            <button class="num-btn bet-btn">3</button>
+            <button class="num-btn bet-btn">4</button>
+            <button class="num-btn bet-btn">5</button>
+            <button class="num-btn bet-btn">6</button>
+            <button class="num-btn bet-btn">7</button>
+            <button class="num-btn bet-btn">8</button>
+            <button class="num-btn bet-btn">9</button>
+        </div>
+    </div>
+
+    <div class="footer-nav">
+        <div class="nav-item">Home</div>
+        <div class="nav-item" style="color: #4caf50;">Wingo</div>
+        <div class="nav-item">Account</div>
+    </div>
+
+    <script>
+        let timeLeft = 30;
+        let period = 20260105001;
+        const timerEl = document.getElementById('timer');
+        const betStatusEl = document.getElementById('bet-status');
+        const betBtns = document.querySelectorAll('.bet-btn');
+
+        function startTimer() {
+            setInterval(() => {
+                if (timeLeft <= 0) {
+                    // Result Generation
+                    let finalRes = Math.floor(Math.random() * 10);
+                    document.getElementById('result').innerText = finalRes;
+                    
+                    // Reset Game
+                    timeLeft = 30;
+                    period++;
+                    document.getElementById('period-id').innerText = period;
+                    enableBetting();
+                }
+
+                // UI Updates
+                let sec = timeLeft < 10 ? "0" + timeLeft : timeLeft;
+                timerEl.innerText = "00:" + sec;
+
+                // Last 5 seconds logic
+                if (timeLeft <= 5) {
+                    timerEl.classList.add('timer-urgent');
+                    disableBetting();
+                } else {
+                    timerEl.classList.remove('timer-urgent');
+                }
+
+                timeLeft--;
+            }, 1000);
+        }
+
+        function disableBetting() {
+            betStatusEl.innerText = "Betting Closed!";
+            betStatusEl.style.color = "#f44336";
+            betBtns.forEach(btn => btn.classList.add('disabled'));
+        }
+
+        function enableBetting() {
+            betStatusEl.innerText = "Betting Open";
+            betStatusEl.style.color = "#4caf50";
+            betBtns.forEach(btn => btn.classList.remove('disabled'));
+        }
+
+        // Start the game
+        startTimer();
+    </script>
+</body>
+</html>
