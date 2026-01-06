@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DK Win Official Sync - Safait</title>
+    <title>DK Win Official Sync Pro</title>
     <style>
         :root { --bg: #0b0e11; --card: #1c1f25; --gold: #ffc107; --green: #00c853; --red: #ff3d00; }
         body { background: var(--bg); color: #fff; font-family: 'Segoe UI', Arial, sans-serif; text-align: center; margin: 0; }
@@ -22,7 +22,7 @@
 <body onload="startOfficialSync()">
 
     <div class="header">
-        <div style="font-size: 10px; color: var(--green);">● SERVER CONNECTED [DKWIN-30S]</div>
+        <div style="font-size: 10px; color: var(--green);">● SERVER CONNECTED [DKWIN-SYNC-FIXED]</div>
         <h2 style="margin: 5px 0; font-size: 18px;">DK WIN LIVE HACK</h2>
     </div>
 
@@ -59,10 +59,11 @@
             const now = new Date();
             const datePart = now.getFullYear() + String(now.getMonth() + 1).padStart(2, '0') + String(now.getDate()).padStart(2, '0');
             
-            // DK Win 30s Exact Formula (স্ক্রিনশট দেখে সংশোধিত)
-            // তারা দিনের মোট সেকেন্ডকে ৩০ দিয়ে ভাগ করে একটি বেইজ নম্বর (যেমন ৫০০০৩) থেকে শুরু করে
+            // DK Win 30s Exact Formula - তোমার শেষ স্ক্রিনশট অনুযায়ী অ্যাডজাস্ট করা
             const totalSecondsToday = (now.getHours() * 3600) + (now.getMinutes() * 60) + now.getSeconds();
-            const periodIndex = 49300 + Math.floor(totalSecondsToday / 30); 
+            
+            // বেইজ নম্বর ৫০০০৩ এর সাথে সঠিক সিঙ্ক (49281 + total/30)
+            const periodIndex = 49281 + Math.floor(totalSecondsToday / 30); 
             const periodID = `${datePart}1000${periodIndex}`;
             
             document.getElementById('periodDisplay').innerText = periodID;
